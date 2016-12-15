@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11761" systemVersion="15G1108" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="w7D-DN-bfv">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--Translation Screen View Controller-->
+        <scene sceneID="8Pr-j6-r9n">
+            <objects>
+                <viewController id="1lL-he-TLd" customClass="TranslationScreenViewController" customModule="Lingua" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="y2y-de-oKd"/>
+                        <viewControllerLayoutGuide type="bottom" id="XOV-pR-dXf"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="JVp-MB-GkU">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" alignment="center" spacing="9" translatesAutoresizingMaskIntoConstraints="NO" id="r63-Lw-0Di">
+                                <rect key="frame" x="0.0" y="74" width="375" height="50"/>
+                                <subviews>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Translating" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cXC-Zf-b7z">
+                                        <rect key="frame" x="145" y="0.0" width="85" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="confidence label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Ycf-NR-DFp">
+                                        <rect key="frame" x="124.5" y="29.5" width="126" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                </subviews>
+                            </stackView>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GYw-Em-idD">
+                                <rect key="frame" x="0.0" y="129" width="375" height="538"/>
+                                <connections>
+                                    <segue destination="FzJ-Ya-dg5" kind="embed" identifier="translationScreenToListSegue" id="vpa-IK-gIT"/>
+                                </connections>
+                            </containerView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="GYw-Em-idD" firstAttribute="top" secondItem="r63-Lw-0Di" secondAttribute="bottom" constant="5" id="7lK-Oy-Hew"/>
+                            <constraint firstItem="r63-Lw-0Di" firstAttribute="top" secondItem="y2y-de-oKd" secondAttribute="bottom" constant="10" id="HGe-wu-IB5"/>
+                            <constraint firstAttribute="trailing" secondItem="GYw-Em-idD" secondAttribute="trailing" id="IPS-hk-1BK"/>
+                            <constraint firstItem="XOV-pR-dXf" firstAttribute="top" secondItem="GYw-Em-idD" secondAttribute="bottom" id="Img-Zl-vU2"/>
+                            <constraint firstItem="r63-Lw-0Di" firstAttribute="leading" secondItem="JVp-MB-GkU" secondAttribute="leading" id="fmE-Dx-gIg"/>
+                            <constraint firstAttribute="trailing" secondItem="r63-Lw-0Di" secondAttribute="trailing" id="qbq-vZ-KSS"/>
+                            <constraint firstItem="GYw-Em-idD" firstAttribute="leading" secondItem="JVp-MB-GkU" secondAttribute="leading" id="sqN-4L-cIG"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" id="FCd-xb-Jew"/>
+                    <connections>
+                        <outlet property="confidenceLabel" destination="Ycf-NR-DFp" id="zKh-zV-PMN"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="qos-au-nHe" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="604" y="104.7976011994003"/>
+        </scene>
+        <!--Translation List View Controller-->
+        <scene sceneID="Onw-8R-cXu">
+            <objects>
+                <viewController id="FzJ-Ya-dg5" customClass="TranslationListViewController" customModule="Lingua" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Mdk-tE-xJT"/>
+                        <viewControllerLayoutGuide type="bottom" id="ZES-NM-XPe"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="XOf-op-gpW">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="538"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="cMs-vy-S8r" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1385" y="196"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="YS4-z2-apF">
+            <objects>
+                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="w7D-DN-bfv" sceneMemberID="viewController">
+                    <toolbarItems/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="IcM-IR-eBw">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <nil name="viewControllers"/>
+                    <connections>
+                        <segue destination="1lL-he-TLd" kind="relationship" relationship="rootViewController" id="yrV-Ni-6dM"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Zik-CE-kfc" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-335.19999999999999" y="104.7976011994003"/>
+        </scene>
+    </scenes>
+</document>

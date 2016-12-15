@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11761" systemVersion="15G1108" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="E32-9X-Cci" customClass="LanguageSectionHeader" customModule="Lingua" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="375" height="81"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="5Ni-G9-2cQ" userLabel="contentView">
+                    <rect key="frame" x="0.0" y="0.0" width="375" height="81"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GF0-B3-6qe">
+                            <rect key="frame" x="15" y="15" width="345" height="51"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="Left Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H5i-ea-E80">
+                                    <rect key="frame" x="0.0" y="0.0" width="81" height="51"/>
+                                    <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="17"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Right Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Shp-9j-X0p">
+                                    <rect key="frame" x="81" y="0.0" width="264" height="51"/>
+                                    <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
+                                    <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                        </stackView>
+                    </subviews>
+                    <color key="backgroundColor" red="0.07934154212776845" green="0.54922564136646113" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <gestureRecognizers/>
+                    <constraints>
+                        <constraint firstItem="GF0-B3-6qe" firstAttribute="leading" secondItem="5Ni-G9-2cQ" secondAttribute="leading" constant="15" id="O5T-uV-D1a"/>
+                        <constraint firstAttribute="trailing" secondItem="GF0-B3-6qe" secondAttribute="trailing" constant="15" id="YBt-ZQ-4UR"/>
+                        <constraint firstAttribute="bottom" secondItem="GF0-B3-6qe" secondAttribute="bottom" constant="15" id="gqi-aR-vDU"/>
+                        <constraint firstItem="GF0-B3-6qe" firstAttribute="top" secondItem="5Ni-G9-2cQ" secondAttribute="top" constant="15" id="rOZ-Pt-7lC"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="5Ni-G9-2cQ" secondAttribute="bottom" id="Bzz-Pd-5jm"/>
+                <constraint firstItem="5Ni-G9-2cQ" firstAttribute="leading" secondItem="E32-9X-Cci" secondAttribute="leading" id="E3r-nu-20B"/>
+                <constraint firstAttribute="trailing" secondItem="5Ni-G9-2cQ" secondAttribute="trailing" id="FgC-AX-3Ac"/>
+                <constraint firstItem="5Ni-G9-2cQ" firstAttribute="top" secondItem="E32-9X-Cci" secondAttribute="top" id="Yuz-2E-bJT"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <connections>
+                <outlet property="backingView" destination="5Ni-G9-2cQ" id="kdM-OJ-j9I"/>
+                <outlet property="leftLabel" destination="H5i-ea-E80" id="Cvg-3o-xxW"/>
+                <outlet property="rightLabel" destination="Shp-9j-X0p" id="BWm-Ph-qHQ"/>
+            </connections>
+            <point key="canvasLocation" x="-154.5" y="-258.5"/>
+        </view>
+    </objects>
+</document>
