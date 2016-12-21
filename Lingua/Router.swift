@@ -72,21 +72,6 @@ struct API {
                     return send(TranslateResponse())
             }
 
-            if case .none = fromLanguage {
-                return send(TranslateResponse())
-            } else if case .unknown = fromLanguage {
-                return send(TranslateResponse())
-            } else if case .none = toLanguage {
-                return send(TranslateResponse())
-            } else if case .unknown = toLanguage {
-                return send(TranslateResponse())
-            }
-
-            // Send pass-through translation if no translation required
-            if fromLanguage == toLanguage {
-                return send(TranslateResponse(withText: text))
-            }
-
             // Perform translation
             translator.translate(text, from: fromLanguage.rawValue,
                                  to: toLanguage.rawValue,

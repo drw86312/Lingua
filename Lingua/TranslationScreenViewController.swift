@@ -11,7 +11,6 @@ import Bond
 
 class TranslationScreenViewController: UIViewController {
 
-    let viewModel = TranslationViewModel()
 
     @IBOutlet weak var confidenceLabel: UILabel!
 
@@ -27,7 +26,7 @@ class TranslationScreenViewController: UIViewController {
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if (segue.identifier == InterfaceConstants.Segue.translationScreenToListSegue),
             let vc = segue.destination as? TranslationListViewController {
-            vc.viewModel = viewModel
+            
         }
     }
 }

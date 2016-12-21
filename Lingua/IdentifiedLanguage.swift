@@ -20,10 +20,6 @@ extension IdentifiedLanguage {
         return Language(rawValue: language) ?? .unknown
     }
 
-    var confidenceStringPercentage: String {
-        return "\(confidence.truncate(places: 2) * 100)%"
-    }
-
     var certaintyLevel: String {
         switch confidence {
         case 0..<(0.2):
@@ -185,19 +181,11 @@ public enum Language: String, Equatable {
     case vietnamese = "vi"
     case chinese = "zh"
     case traditionalChinese = "zh-TW"
-
-    static let supportedInputLanguages: [Language] = [.english]
-
-    static let supportedOutputLanguages: [Language] = [.english,
-                                                       .french,
-                                                       .spanish,
-                                                       .portuguese,
-                                                       .bosnian]
     
     var displayValue: String {
         switch self {
 
-        case .none: return "None"
+        case .none: return "Select Language"
         case .unknown: return "Unknown"
 
         case .afrikaans: return "Afrikaans"
@@ -264,4 +252,43 @@ public enum Language: String, Equatable {
         case .traditionalChinese: return "Traditional Chinese"
         }
     }
+
+    var supportedOutputLanguages: [Language] {
+        switch self {
+        case .english:
+            return [.french,
+                    .spanish,
+                    .portuguese,
+                    .german,
+                    .italian,
+                    .arabic,
+                    .korean,
+                    .japanese]
+        case .spanish:
+            return [.english,
+                    .french]
+        case .french:
+            return [.english,
+                    .spanish]
+        case .arabic,
+             .german,
+             .portuguese,
+             .korean,
+             .japanese,
+             .italian:
+            return [.english]
+        default:
+            return []
+        }
+    }
+
+    static let supportedInputLanguages: [Language] = [.english,
+                                                      .french,
+                                                      .spanish,
+                                                      .portuguese,
+                                                      .german,
+                                                      .italian,
+                                                      .arabic,
+                                                      .korean,
+                                                      .japanese]
 }

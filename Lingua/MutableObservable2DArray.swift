@@ -13,10 +13,14 @@ extension MutableObservable2DArray {
 
     func removeRowsIn(sectionIndex: Int) {
         guard let section = sections[safe: sectionIndex] else { return }
-        section
-            .items
-            .enumerated()
-            .map { IndexPath(row: $0.0, section: sectionIndex) }
-            .forEach { removeItem(at: $0) }
+        batchUpdate { dataSource in
+            section
+                .items
+                .enumerated()
+                .map { IndexPath(row: $0.0, section: sectionIndex) }
+                .forEach {
+                    dataSource.removeItem(at: $0)
+            }
+        }
     }
 }

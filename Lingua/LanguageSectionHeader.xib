@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11761" systemVersion="15G1108" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="11762" systemVersion="15G1212" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
@@ -21,27 +21,37 @@
                         <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GF0-B3-6qe">
                             <rect key="frame" x="15" y="15" width="345" height="51"/>
                             <subviews>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="Left Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H5i-ea-E80">
-                                    <rect key="frame" x="0.0" y="0.0" width="81" height="51"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="750" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="H5i-ea-E80">
+                                    <rect key="frame" x="0.0" y="0.0" width="345" height="51"/>
                                     <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="17"/>
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <nil key="highlightedColor"/>
                                 </label>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Right Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Shp-9j-X0p">
-                                    <rect key="frame" x="81" y="0.0" width="264" height="51"/>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Shp-9j-X0p">
+                                    <rect key="frame" x="345" y="0.0" width="0.0" height="51"/>
                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="17"/>
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                             </subviews>
                         </stackView>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="PPB-dQ-G5P">
+                            <rect key="frame" x="0.0" y="80" width="375" height="1"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="0.5" id="q4F-GW-XfU"/>
+                            </constraints>
+                        </view>
                     </subviews>
                     <color key="backgroundColor" red="0.07934154212776845" green="0.54922564136646113" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                     <gestureRecognizers/>
                     <constraints>
+                        <constraint firstItem="PPB-dQ-G5P" firstAttribute="leading" secondItem="5Ni-G9-2cQ" secondAttribute="leading" id="5Kt-rM-wuS"/>
+                        <constraint firstAttribute="trailing" secondItem="PPB-dQ-G5P" secondAttribute="trailing" id="8gR-gK-mQz"/>
                         <constraint firstItem="GF0-B3-6qe" firstAttribute="leading" secondItem="5Ni-G9-2cQ" secondAttribute="leading" constant="15" id="O5T-uV-D1a"/>
                         <constraint firstAttribute="trailing" secondItem="GF0-B3-6qe" secondAttribute="trailing" constant="15" id="YBt-ZQ-4UR"/>
                         <constraint firstAttribute="bottom" secondItem="GF0-B3-6qe" secondAttribute="bottom" constant="15" id="gqi-aR-vDU"/>
+                        <constraint firstAttribute="bottom" secondItem="PPB-dQ-G5P" secondAttribute="bottom" id="jzY-Rz-Q88"/>
                         <constraint firstItem="GF0-B3-6qe" firstAttribute="top" secondItem="5Ni-G9-2cQ" secondAttribute="top" constant="15" id="rOZ-Pt-7lC"/>
                     </constraints>
                 </view>

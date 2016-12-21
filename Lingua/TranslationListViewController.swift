@@ -11,47 +11,22 @@ import Bond
 import ReactiveKit
 import SlackTextViewController
 
-struct TranslationTableViewBond: TableViewBond {
+struct BondDataSource: DataSourceProtocol {
 
-    let animated: Bool = false
+    let observableArray: MutableObservable2DArray<SectionMetadata, Row>
 
-    func cellForRow(at indexPath: IndexPath,
-                    tableView: UITableView,
-                    dataSource: Observable2DArray<SectionMetadata, Row>) -> UITableViewCell {
-
-        let rows = dataSource[indexPath.section].items
-        var cell = UITableViewCell()
-
-        if let row = rows[indexPath.row] as? LanguageRow,
-            let languageCell = tableView.dequeueReusableCell(withIdentifier: InterfaceConstants.Cells.Identifier.languageCell, for: indexPath) as? LanguageCell {
-            languageCell.label.text = row.language
-            cell = languageCell
-        } else if let row = rows[indexPath.row] as? TranslationRow,
-            let translationCell = tableView.dequeueReusableCell(withIdentifier: InterfaceConstants.Cells.Identifier.translationCell, for: indexPath) as? TranslationCell {
-            translationCell.translatedTextLabel.text = row.translation
-            cell = translationCell
-        } else if let row = rows[indexPath.row] as? ErrorRow,
-            let errorCell = tableView.dequeueReusableCell(withIdentifier: InterfaceConstants.Cells.Identifier.errorCell, for: indexPath) as? ErrorCell {
-            errorCell.titleLabel.text = row.error
-            cell = errorCell
-        }
-
-        return cell
+    var numberOfSections: Int {
+        return observableArray.sections.count
     }
 
-    func titleForHeader(in section: Int, dataSource: Observable2DArray<SectionMetadata, Row>) -> String? {
-        return nil
-    }
-
-    func titleForFooter(in section: Int, dataSource: Observable2DArray<SectionMetadata, Row>) -> String? {
-        return nil
+    func numberOfItems(inSection section: Int) -> Int {
+        return observableArray.sections[section].items.count
     }
 }
 
 class TranslationListViewController: SLKTextViewController {
 
-    var viewModel: TranslationViewModel!
-    let tableViewBond = TranslationTableViewBond()
+    let viewModel = TranslationViewModel()
 
     override class func tableViewStyle(for decoder: NSCoder) -> UITableViewStyle {
         return .plain
@@ -60,9 +35,9 @@ class TranslationListViewController: SLKTextViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        guard let tableView = tableView else { return }
-
         isInverted = false
+
+        guard let tableView = tableView else { return }
 
         // Register Cells
         tableView.register(UINib(nibName: InterfaceConstants.Nibs.translationCell, bundle: nil),
@@ -78,10 +53,8 @@ class TranslationListViewController: SLKTextViewController {
         // Configure tableview
         tableView.tableFooterView = UIView()
         tableView.keyboardDismissMode = .onDrag
-        tableView.sectionHeaderHeight = UITableViewAutomaticDimension
         tableView.rowHeight = UITableViewAutomaticDimension
         tableView.estimatedRowHeight = 50
-        tableView.estimatedSectionHeaderHeight = 30
 
         // Configure text input view
         textView.placeholder = "Type text to be translated here"
@@ -97,8 +70,25 @@ class TranslationListViewController: SLKTextViewController {
 
     private func setupViewModelBindings(_ tableView: UITableView) {
 
-        // Bind view model data source to tableview
-        viewModel.dataSource.bind(to: tableView, using: tableViewBond)
+        viewModel.datasource.bind(to: tableView, animated: false) { datasource, indexpath, tableview -> UITableViewCell in
+            let rows = datasource[indexpath.section].items
+            var cell = UITableViewCell()
+
+            if let row = rows[indexpath.row] as? LanguageRow,
+                let languageCell = tableView.dequeueReusableCell(withIdentifier: InterfaceConstants.Cells.Identifier.languageCell, for: indexpath) as? LanguageCell {
+                languageCell.label.text = row.language
+                cell = languageCell
+            } else if let row = rows[indexpath.row] as? TranslationRow,
+                let translationCell = tableView.dequeueReusableCell(withIdentifier: InterfaceConstants.Cells.Identifier.translationCell, for: indexpath) as? TranslationCell {
+                translationCell.translatedTextLabel.text = row.translation
+                cell = translationCell
+            } else if let row = rows[indexpath.row] as? ErrorRow,
+                let errorCell = tableView.dequeueReusableCell(withIdentifier: InterfaceConstants.Cells.Identifier.errorCell, for: indexpath) as? ErrorCell {
+                errorCell.titleLabel.text = row.error
+                cell = errorCell
+            }
+            return cell
+        }
 
         // Bind input text view to viewModel
         viewModel
@@ -120,8 +110,11 @@ class TranslationListViewController: SLKTextViewController {
         // Bind selected input language to viewmodel
         let selectedInputLanguage = tableView
             .selectedRow
-            .filter { self.viewModel.dataSource.sections[$0.section].metadata.type == .inputLanguage }
+            .filter { self.viewModel.datasource.sections[$0.section].metadata == .inputLanguage }
             .map { Language.supportedInputLanguages[$0.row] }
+            .doOn(next: { _ in
+                self.viewModel.confidence.value = 1
+            })
 
         viewModel
             .inputLanguage
@@ -129,14 +122,21 @@ class TranslationListViewController: SLKTextViewController {
             .disposeIn(bnd_bag)
 
         // Bind selected output language to viewmodel
-        let selectedOutputLanguage = tableView
+        // Set selected output language to .none if input language changes and current output language not supported
+        let selectOutputLanguage = tableView
             .selectedRow
-            .filter { self.viewModel.dataSource.sections[$0.section].metadata.type == .outputLanguage }
-            .map { Language.supportedOutputLanguages[$0.row] }
+            .filter { self.viewModel.datasource.sections[$0.section].metadata == .outputLanguage }
+            .map { self.viewModel.inputLanguage.value.supportedOutputLanguages[$0.row] }
+
+        let selectInputLanguage = viewModel
+            .inputLanguage
+            .map { $0.supportedOutputLanguages.contains(self.viewModel.outputLanguage.value) ? self.viewModel.outputLanguage.value : .none }
+
+        let mergedOutputLanguage = selectOutputLanguage.merge(with: selectInputLanguage)
 
         viewModel
             .outputLanguage
-            .bind(signal: selectedOutputLanguage)
+            .bind(signal: mergedOutputLanguage)
             .disposeIn(bnd_bag)
 
         // Hide language selection on cell selection or tableview scroll
@@ -154,16 +154,16 @@ class TranslationListViewController: SLKTextViewController {
         tableView.bnd_delegate.forwardTo = self
     }
 
-//    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-//        return 0
-//    }
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        let section = viewModel.datasource.sections[section]
+        if section.metadata == .translation || section.metadata == .error { return 0 }
+        return 50
+    }
 
     override func tableView(_ tableView: UITableView,
                             viewForHeaderInSection section: Int) -> UIView? {
-        let section = viewModel.dataSource.sections[section]
-        if section.metadata.type == .translation || section.metadata.type == .error { return nil }
-
-        print(section.metadata.type)
+        let section = viewModel.datasource.sections[section]
+        if section.metadata == .translation || section.metadata == .error { return UIView() }
 
         guard let header = tableView.dequeueReusableHeaderFooterView(withIdentifier: InterfaceConstants.Headers.languageSectionHeader) as? LanguageSectionHeader else { return nil }
 
@@ -173,15 +173,16 @@ class TranslationListViewController: SLKTextViewController {
         // Add side-effect that dismisses keyboard
         let tapSignal = tapGesture.bnd_tap.doOn(next: { _ in self.view.endEditing(true) })
 
-        if section.metadata.type == .inputLanguage {
+        if section.metadata == .inputLanguage {
             header.leftLabel.text = viewModel.inputLanguage.value.displayValue
+            header.rightLabel.text = viewModel.confidence.value.percentageString
             tapSignal
                 .observeNext { gesture in
                     self.viewModel.shouldDisplayOutputLanguage.value = false
                     self.viewModel.shouldDisplayInputLanguage.value = !self.viewModel.shouldDisplayInputLanguage.value
                 }
                 .disposeIn(bnd_bag)
-        } else if section.metadata.type == .outputLanguage {
+        } else if section.metadata == .outputLanguage {
             header.leftLabel.text = viewModel.outputLanguage.value.displayValue
             tapSignal
                 .observeNext { gesture in

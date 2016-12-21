@@ -12,7 +12,7 @@ import ReactiveKit
 import LanguageTranslatorV2
 
 
-typealias SectionMetadata = (header: String?, footer: String?, type: Section)
+typealias SectionMetadata = (Section)
 
 protocol Row { }
 
@@ -74,7 +74,7 @@ enum Section: Equatable {
     }
 
     var metaData: SectionMetadata {
-        return (header: headerTitle, footer: footerTitle, type: self)
+        return (type: self)
     }
 }
 
@@ -85,7 +85,7 @@ class TranslationViewModel {
     // Input
     let inputText = Observable<String?>("")
     let inputLanguage = Observable<Language>(.none)
-    let confidenceString = Observable<String>("")
+    let confidence = Observable<Double>(0.0)
 
     // Output
     let translationResult = Observable<TranslateResponse>(TranslateResponse())
@@ -101,27 +101,30 @@ class TranslationViewModel {
     // Disposable
     let disposeBag = DisposeBag()
 
-    let dataSource: MutableObservable2DArray<SectionMetadata, Row> = MutableObservable2DArray(
-        [viewModel.errorSection(.none),
-            viewModel.inputLanguageSection(.none),
-            viewModel.outputLanguageSection(.none),
-            viewModel.translationSection(TranslateResponse())])
+    // Data source
+    let datasource: MutableObservable2DArray<SectionMetadata, Row>
+
+    // Constants
+    let throttleDuration = 0.5
 
     init() {
 
+        datasource = MutableObservable2DArray(
+            [viewModel.errorSection(.none),
+             viewModel.inputLanguageSection(.none),
+             viewModel.outputLanguageSection(.none, inputLanguage: inputLanguage.value),
+             viewModel.translationSection(TranslateResponse())])
+
         // Derive input language from user input text
         let fetchLanguage = inputText
-            .throttle(seconds: 1)
+            .throttle(seconds: throttleDuration)
             .flatMapLatest { text -> Signal<[IdentifiedLanguage], LinguaError> in
                 return API.identifyLanguageFrom(text: text)
             }
             .suppressError(logging: true)
 
-        let confidenceSignal = fetchLanguage
-            .map { "Confidence: " + ($0.first?.confidenceStringPercentage ?? "") }
-
-        confidenceString
-            .bind(signal: confidenceSignal)
+        confidence
+            .bind(signal: fetchLanguage.map { $0.first?.confidence ?? 0.0 })
             .disposeIn(disposeBag)
 
         let toLanguageEnum = fetchLanguage
@@ -143,6 +146,7 @@ class TranslationViewModel {
             combineLatest(inputText,
                           inputLanguage,
                           outputLanguage)
+                .throttle(seconds: throttleDuration)
                 .flatMapLatest { tuple -> Signal<TranslateResponse, NoError> in
                     let inputText = tuple.0
                     let inputLanguage = tuple.1
@@ -176,6 +180,7 @@ class TranslationViewModel {
             .disposeIn(disposeBag)
 
         shouldDisplayInputLanguage
+            .distinct()
             .observeNext { showRows in
                 self.replaceSectionOf(type: .inputLanguage,
                                       withSection: viewModel.inputLanguageSection(self.inputLanguage.value,
@@ -184,31 +189,34 @@ class TranslationViewModel {
             .disposeIn(disposeBag)
 
         shouldDisplayOutputLanguage
+            .distinct()
             .observeNext { showRows in
                 self.replaceSectionOf(type: .outputLanguage,
                                       withSection: viewModel.outputLanguageSection(self.outputLanguage.value,
+                                                                                   inputLanguage: self.inputLanguage.value,
                                                                                    rowsVisible: showRows))
-
             }
             .disposeIn(disposeBag)
     }
 
     func replaceSectionOf(type: Section, withSection: Observable2DArraySection<SectionMetadata, Row>) {
         guard let index = indexOfSection(type: type) else { return }
-        self.dataSource.removeSection(at: index)
-        self.dataSource.insert(section: withSection, at: index)
+        datasource.batchUpdate { datasource in
+            datasource.removeSection(at: index)
+            datasource.insert(section: withSection, at: index)
+        }
     }
 
     func indexOfSection(type: Section) -> Int? {
-        guard let index = self.dataSource.sections.index(where: { $0.metadata.type == type }) else { return nil }
+        guard let index = self.datasource.sections.index(where: { $0.metadata == type }) else { return nil }
         return index
     }
 
     static func errorSection(_ error: LinguaError) -> Observable2DArraySection<SectionMetadata, Row> {
         var rows: [ErrorRow] {
             switch error {
-            case .network(let error):
-                return [ErrorRow(error: error)]
+            case .network:
+                return [ErrorRow(error: "Error: could not translate input")]
             case .none:
                 return []
             }
@@ -218,9 +226,9 @@ class TranslationViewModel {
             items: rows)
     }
 
-    static func translationSection(_ translationResponse: TranslateResponse) -> Observable2DArraySection<SectionMetadata, Row> {
-        let row = TranslationRow(translation: translationResponse.translations.first?.translation ?? "",
-                                 wordCount: "\(translationResponse.wordCount)")
+    static func translationSection(_ response: TranslateResponse) -> Observable2DArraySection<SectionMetadata, Row> {
+        let row = TranslationRow(translation: response.translations.first?.translation ?? "",
+                                 wordCount: "\(response.wordCount)")
         return Observable2DArraySection<SectionMetadata, Row>(
             metadata: Section.translation.metaData,
             items: [row])
@@ -236,8 +244,9 @@ class TranslationViewModel {
     }
 
     static func outputLanguageSection(_ selectedLanguage: Language,
+                                      inputLanguage: Language,
                                       rowsVisible: Bool = false) -> Observable2DArraySection<SectionMetadata, Row> {
-        let rows = rowsVisible ? Language.supportedOutputLanguages
+        let rows = rowsVisible ? inputLanguage.supportedOutputLanguages
             .map { LanguageRow(language: $0.displayValue, isSelected: $0 == selectedLanguage) } : []
         return Observable2DArraySection<SectionMetadata, Row>(
             metadata: Section.outputLanguage.metaData,
